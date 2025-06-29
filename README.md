@@ -27,14 +27,30 @@ Before you begin, make sure you have the following installed:
 
 ## 📦 Setup Instructions
 
-### 1. Clone the Repository
+### Option A: Run from Docker Hub (Recommended - No Build Required)
+
+You can directly pull and run the pre-built image from Docker Hub:
+
+```bash
+docker pull adhnannp/embedding-api:latest
+```
+
+Then run it:
+
+```bash
+docker run -p 8000:8000 adhnannp/embedding-api
+```
+
+### Option B: Build from Source
+
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/embedding-api.git
 cd embedding-api
 ```
 
-### 2. Build the Docker Image
+#### 2. Build the Docker Image
 
 ```bash
 docker build -t embedding-api .
@@ -48,6 +64,10 @@ You can run the Embedding API Docker container using **either** of the following
 
 #### 🔹 Option 1: Run in Foreground (until closed)
 ```bash
+# If using Docker Hub image:
+docker run -p 8000:8000 adhnannp/embedding-api
+
+# If using locally built image:
 docker run -p 8000:8000 embedding-api
 ```
 
@@ -58,6 +78,10 @@ docker run -p 8000:8000 embedding-api
 #### 🔹 Option 2: Run in Background (auto-restart on reboot)
 
 ```bash
+# If using Docker Hub image:
+docker run -d --restart always -p 8000:8000 --name embedding-api adhnannp/embedding-api
+
+# If using locally built image:
 docker run -d --restart always -p 8000:8000 --name embedding-api embedding-api
 ```
 
@@ -73,6 +97,34 @@ docker run -d --restart always -p 8000:8000 --name embedding-api embedding-api
 * `--restart always`: Ensure the container restarts automatically on system reboot or crash.
 * `-p 8000:8000`: Maps port `8000` of the container to port `8000` on your host machine.
 * `--name embedding-api`: Names the container `embedding-api` for easier management.
+
+---
+
+## ⚠️ Common Issue: Port Already in Use
+
+If port 8000 is already used by another process, you will get an error like:
+```
+Error starting userland proxy: listen tcp4 0.0.0.0:8000: bind: address already in use
+```
+
+To fix this, you can either:
+
+### ✅ Option 1: Kill the process using port 8000
+```bash
+# Find the process using port 8000
+lsof -i :8000
+
+# Kill the process (replace <PID> with the actual process ID)
+kill -9 <PID>
+```
+
+### ✅ Option 2: Run the container on a different port
+```bash
+# Run on port 5000 instead (maps container port 8000 to host port 5000)
+docker run -p 5000:8000 adhnannp/embedding-api
+
+# Then access the API at http://localhost:5000 instead of http://localhost:8000
+```
 
 ---
 
